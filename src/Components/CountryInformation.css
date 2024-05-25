@@ -87,3 +87,35 @@ input {
 	font-size: 20px;
 	color: red;
 }
+/* CountryInformation.css */
+.country-container {
+    position: relative;
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.search {
+    position: relative;
+}
+
+.suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+    background: #fff;
+    z-index: 1000;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.suggestion {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.suggestion:hover {
+    background-color: #f0f0f0;
+}

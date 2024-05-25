@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import './CountryInformation.css';
 import CountryInfo from './CountryInfo';
@@ -6,6 +7,7 @@ function CountryInformation() {
     const [countryName, setCountryName] = useState('');
     const [countryData, setCountryData] = useState(null);
     const [error, setError] = useState('');
+    const [suggestions, setSuggestions] = useState([]); // New state for suggestions
 
     const handleSearch = () => {
         if (!countryName) {
@@ -37,6 +39,36 @@ function CountryInformation() {
             });
     };
 
+    const handleInputChange = (e) => {
+        const input = e.target.value;
+        setCountryName(input);
+
+        if (input.length > 0) {
+            const suggestionsURL = `https://restcountries.com/v3.1/name/${input}`;
+            fetch(suggestionsURL)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status !== 404) {
+                        setSuggestions(data.map(country => country.name.common));
+                    } else {
+                        setSuggestions([]);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching suggestions:', error);
+                    setSuggestions([]);
+                });
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionClick = (suggestion) => {
+        setCountryName(suggestion);
+        setSuggestions([]);
+        handleSearch();
+    };
+
     return (
         <div className="country-container">
             <h1 className='data'>Search Country data</h1>
@@ -46,11 +78,22 @@ function CountryInformation() {
                     id="countryName"
                     placeholder="Enter a country name here..."
                     value={countryName}
-                    onChange={(e) => setCountryName(e.target.value)}
+                    onChange={handleInputChange}
                 />
                 <button id="search-btn" onClick={handleSearch}>
                     Search
                 </button>
+                <div className="suggestions">
+                    {suggestions.map((suggestion, index) => (
+                        <div
+                            key={index}
+                            className="suggestion"
+                            onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                            {suggestion}
+                        </div>
+                    ))}
+                </div>
             </div>
             <div id="result">
                 {error && <h3 className="error">{error}</h3>}
@@ -61,3 +104,4 @@ function CountryInformation() {
 }
 
 export default CountryInformation;
+
